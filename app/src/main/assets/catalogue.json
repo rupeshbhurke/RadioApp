@@ -1,0 +1,32 @@
+[
+  {
+    "id": "1",
+    "name": "Radio City Mumbai",
+    "streamUrl": "http://prclive1.listenon.in:8808/",
+    "logoUrl": "",
+    "countryCode": "IN",
+    "state": "Maharashtra",
+    "city": "Mumbai",
+    "languages": ["Hindi"],
+    "genres": ["Music", "Bollywood"],
+    "category": "Local",
+    "featured": true,
+    "sortOrder": 1,
+    "enabled": true
+  },
+  {
+    "id": "2",
+    "name": "Vividh Bharati",
+    "streamUrl": "http://air.pc.cdn.bitgravity.com/air/live/pbaudio001/playlist.m3u8",
+    "logoUrl": "",
+    "countryCode": "IN",
+    "state": "National",
+    "city": "New Delhi",
+    "languages": ["Hindi"],
+    "genres": ["Music", "Talk"],
+    "category": "National",
+    "featured": true,
+    "sortOrder": 2,
+    "enabled": true
+  }
+]

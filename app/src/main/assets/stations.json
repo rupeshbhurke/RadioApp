@@ -1,0 +1,82 @@
+[
+  {
+    "id": "1",
+    "name": "BBC World Service",
+    "streamUrl": "http://stream.live.vc.bbcmedia.co.uk/bbc_world_service",
+    "city": "London",
+    "language": "English",
+    "logoUrl": ""
+  },
+  {
+    "id": "2",
+    "name": "KEXP Seattle",
+    "streamUrl": "https://kexp.streamguys1.com/kexp160.aac",
+    "city": "Seattle",
+    "language": "English",
+    "logoUrl": ""
+  },
+  {
+    "id": "3",
+    "name": "WNYC FM",
+    "streamUrl": "http://fm939.wnyc.org/wnycfm.aac",
+    "city": "New York",
+    "language": "English",
+    "logoUrl": ""
+  },
+  {
+    "id": "4",
+    "name": "SomaFM Groove Salad",
+    "streamUrl": "http://ice1.somafm.com/groovesalad-128-aac",
+    "city": "San Francisco",
+    "language": "Electronic",
+    "logoUrl": ""
+  },
+  {
+    "id": "5",
+    "name": "Lofi Radio",
+    "streamUrl": "http://stream.zeno.fm/f3wvbbqmdg8uv",
+    "city": "Global",
+    "language": "Music",
+    "logoUrl": ""
+  },
+  {
+    "id": "6",
+    "name": "Dance Wave Retro",
+    "streamUrl": "http://dancewave.online/dance.mp3",
+    "city": "Budapest",
+    "language": "Dance",
+    "logoUrl": ""
+  },
+  {
+    "id": "7",
+    "name": "Radio City Hindi",
+    "streamUrl": "https://prclive1.listenon.in/Hindi",
+    "city": "Mumbai",
+    "language": "Hindi",
+    "logoUrl": ""
+  },
+  {
+    "id": "8",
+    "name": "Radio Mirchi 98.3 FM",
+    "streamUrl": "http://peridot.streamguys.com:7150/Mirchi",
+    "city": "Delhi",
+    "language": "Hindi",
+    "logoUrl": ""
+  },
+  {
+    "id": "9",
+    "name": "Suryan FM",
+    "streamUrl": "http://37.59.32.115:8052/stream",
+    "city": "Chennai",
+    "language": "Tamil",
+    "logoUrl": ""
+  },
+  {
+    "id": "10",
+    "name": "Radio City Kannada",
+    "streamUrl": "https://prclive1.listenon.in/Kannada",
+    "city": "Bengaluru",
+    "language": "Kannada",
+    "logoUrl": ""
+  }
+]
