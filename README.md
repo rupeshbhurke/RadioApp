@@ -12,6 +12,7 @@ RadioApp allows users to search, favorite, and stream thousands of internet radi
 - **Customizable Layout:** Adjust grid layout from 1-column list views to 5-column grid views.
 - **Mini Player:** Sticky bottom player controls across all tabs.
 - **Media Session Integration:** Fully integrates with Android's MediaSession for lock-screen controls, Bluetooth metadata, and headset button support.
+- **Sleep Timer:** Automatically stops playback and exits the app after a set duration.
 
 ## Tech Stack
 - Kotlin

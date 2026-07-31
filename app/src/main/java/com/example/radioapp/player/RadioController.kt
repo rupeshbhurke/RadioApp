@@ -160,7 +160,8 @@ class RadioController(private val context: Context) {
                     updateMediaMetadataWithTimer(null)
                     pause()
                     _sleepTimerExpired.emit(Unit)
-                    break
+                    kotlinx.coroutines.delay(500) // Give UI a moment to react if in foreground
+                    kotlin.system.exitProcess(0)
                 }
                 _sleepTimerRemaining.value = remaining
                 
