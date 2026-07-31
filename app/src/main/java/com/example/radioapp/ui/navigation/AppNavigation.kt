@@ -38,7 +38,7 @@ fun AppNavigation(
             FavouritesScreen(repository, radioController)
         }
         composable(Screen.Settings.route) {
-            SettingsScreen(repository)
+            SettingsScreen(repository, radioController)
         }
     }
 }

@@ -22,6 +22,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -64,6 +66,12 @@ class MainActivity : ComponentActivity() {
 
         val repository = StationRepository(this)
         radioController = RadioController(this)
+        
+        lifecycleScope.launch {
+            radioController.sleepTimerExpired.collect {
+                finishAndRemoveTask()
+            }
+        }
         
         setContent {
             val themeMode by repository.preferences.themeModeFlow.collectAsState(initial = 0)

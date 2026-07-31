@@ -137,10 +137,11 @@ fun FavouritesScreen(repository: StationRepository, radioController: RadioContro
 }
 
 @Composable
-fun SettingsScreen(repository: StationRepository) {
+fun SettingsScreen(repository: StationRepository, radioController: RadioController) {
     val themeMode by repository.preferences.themeModeFlow.collectAsState(initial = 0)
     val autoPlay by repository.preferences.autoPlayFlow.collectAsState(initial = true)
     val gridColumns by repository.preferences.gridColumnsFlow.collectAsState(initial = 3)
+    val sleepTimerRemaining by radioController.sleepTimerRemaining.collectAsState()
     val coroutineScope = rememberCoroutineScope()
     
     var isSyncing by remember { mutableStateOf(false) }
@@ -148,10 +149,91 @@ fun SettingsScreen(repository: StationRepository) {
     
     var viewModeExpanded by remember { mutableStateOf(false) }
     var themeModeExpanded by remember { mutableStateOf(false) }
+    var sleepTimerExpanded by remember { mutableStateOf(false) }
 
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
         Text(text = "Settings", style = MaterialTheme.typography.headlineSmall, modifier = Modifier.padding(bottom = 16.dp))
         
+        Row(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+            Text("Sleep Timer")
+            Box {
+                OutlinedButton(onClick = { sleepTimerExpanded = true }) {
+                    val text = if (sleepTimerRemaining != null) {
+                        val totalSeconds = sleepTimerRemaining!! / 1000
+                        val h = totalSeconds / 3600
+                        val m = (totalSeconds % 3600) / 60
+                        val s = totalSeconds % 60
+                        if (h > 0) String.format("%02d:%02d:%02d", h, m, s) else String.format("%02d:%02d", m, s)
+                    } else "Off"
+                    Text(text)
+                }
+                
+                if (sleepTimerExpanded) {
+                    var hours by remember { mutableStateOf(0) }
+                    var minutes by remember { mutableStateOf(15) }
+                    
+                    AlertDialog(
+                        onDismissRequest = { sleepTimerExpanded = false },
+                        title = { Text("Set Sleep Timer") },
+                        text = {
+                            Column {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceEvenly,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                        Text("Hours")
+                                        Row(verticalAlignment = Alignment.CenterVertically) {
+                                            androidx.compose.material3.IconButton(onClick = { if (hours > 0) hours-- }) {
+                                                Text("-", style = MaterialTheme.typography.titleLarge)
+                                            }
+                                            Text(String.format("%02d", hours), style = MaterialTheme.typography.titleLarge)
+                                            androidx.compose.material3.IconButton(onClick = { if (hours < 24) hours++ }) {
+                                                Text("+", style = MaterialTheme.typography.titleLarge)
+                                            }
+                                        }
+                                    }
+                                    Text(":", style = MaterialTheme.typography.titleLarge)
+                                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                        Text("Minutes")
+                                        Row(verticalAlignment = Alignment.CenterVertically) {
+                                            androidx.compose.material3.IconButton(onClick = { if (minutes > 0) minutes-- else if (hours > 0) { hours--; minutes = 59 } }) {
+                                                Text("-", style = MaterialTheme.typography.titleLarge)
+                                            }
+                                            Text(String.format("%02d", minutes), style = MaterialTheme.typography.titleLarge)
+                                            androidx.compose.material3.IconButton(onClick = { if (minutes < 59) minutes++ else if (hours < 24) { hours++; minutes = 0 } }) {
+                                                Text("+", style = MaterialTheme.typography.titleLarge)
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        confirmButton = {
+                            Button(onClick = {
+                                val totalMinutes = (hours * 60) + minutes
+                                // Max 24 hours (1440 mins), min 1 minute unless 0 (Off)
+                                val finalMinutes = totalMinutes.coerceIn(0, 1440)
+                                radioController.setSleepTimer(finalMinutes)
+                                sleepTimerExpanded = false
+                            }) {
+                                Text("Set Timer")
+                            }
+                        },
+                        dismissButton = {
+                            androidx.compose.material3.OutlinedButton(onClick = {
+                                radioController.setSleepTimer(0)
+                                sleepTimerExpanded = false
+                            }) {
+                                Text("Turn Off")
+                            }
+                        }
+                    )
+                }
+            }
+        }
+
         Row(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
             Text("Theme Mode")
             Box {

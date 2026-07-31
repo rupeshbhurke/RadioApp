@@ -15,6 +15,9 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Surface
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -32,6 +35,7 @@ fun MiniPlayer(
     val currentStation by radioController.currentStation.collectAsState()
     val isPlaying by radioController.isPlaying.collectAsState()
     val errorMessage by radioController.errorMessage.collectAsState()
+    val sleepTimerRemaining by radioController.sleepTimerRemaining.collectAsState()
 
     if (currentStation != null) {
         Row(
@@ -62,11 +66,33 @@ fun MiniPlayer(
                         overflow = TextOverflow.Ellipsis
                     )
                 } else {
-                    Text(
-                        text = currentStation!!.city,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = currentStation!!.city,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        if (sleepTimerRemaining != null) {
+                            val totalSeconds = sleepTimerRemaining!! / 1000
+                            val h = totalSeconds / 3600
+                            val m = (totalSeconds % 3600) / 60
+                            val s = totalSeconds % 60
+                            val text = if (h > 0) String.format("%02d:%02d:%02d", h, m, s) else String.format("%02d:%02d", m, s)
+                            
+                            androidx.compose.foundation.layout.Spacer(modifier = Modifier.width(8.dp))
+                            Surface(
+                                color = MaterialTheme.colorScheme.tertiaryContainer,
+                                shape = RoundedCornerShape(4.dp)
+                            ) {
+                                Text(
+                                    text = "😴 $text",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.onTertiaryContainer,
+                                    modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp)
+                                )
+                            }
+                        }
+                    }
                 }
             }
 
