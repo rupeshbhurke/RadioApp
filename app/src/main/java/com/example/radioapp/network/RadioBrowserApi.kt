@@ -19,9 +19,10 @@ interface RadioBrowserApi {
 
     @GET("json/stations/search")
     suspend fun searchStations(
-        @Query("country") country: String = "India",
+        @Query("country") country: String? = "India",
         @Query("hidebroken") hideBroken: Boolean = true,
         @Query("limit") limit: Int = 100,
+        @Query("offset") offset: Int = 0,
         @Query("order") order: String = "clickcount",
         @Query("reverse") reverse: Boolean = true
     ): List<ApiStation>

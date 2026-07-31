@@ -11,11 +11,9 @@ import com.example.radioapp.data.StationRepository
 import com.example.radioapp.player.RadioController
 import com.example.radioapp.ui.screens.BrowseScreen
 import com.example.radioapp.ui.screens.FavouritesScreen
-import com.example.radioapp.ui.screens.HomeScreen
 import com.example.radioapp.ui.screens.SettingsScreen
 
 sealed class Screen(val route: String) {
-    object Home : Screen("home")
     object Browse : Screen("browse")
     object Favourites : Screen("favourites")
     object Settings : Screen("settings")
@@ -30,12 +28,9 @@ fun AppNavigation(
 ) {
     NavHost(
         navController = navController,
-        startDestination = Screen.Home.route,
+        startDestination = Screen.Browse.route,
         modifier = Modifier.padding(paddingValues)
     ) {
-        composable(Screen.Home.route) {
-            HomeScreen(repository, radioController)
-        }
         composable(Screen.Browse.route) {
             BrowseScreen(repository, radioController)
         }

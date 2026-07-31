@@ -14,15 +14,14 @@ val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "se
 
 class AppPreferences(private val context: Context) {
     companion object {
-        val DARK_MODE_KEY = booleanPreferencesKey("dark_mode")
+        val THEME_MODE_KEY = androidx.datastore.preferences.core.intPreferencesKey("theme_mode")
         val AUTO_PLAY_KEY = booleanPreferencesKey("auto_play")
-        val VIEW_MODE_KEY = stringPreferencesKey("view_mode")
-        val FONT_SIZE_KEY = stringPreferencesKey("font_size")
+        val GRID_COLUMNS_KEY = androidx.datastore.preferences.core.intPreferencesKey("grid_columns")
     }
 
-    val darkModeFlow: Flow<Boolean> = context.dataStore.data
+    val themeModeFlow: Flow<Int> = context.dataStore.data
         .map { preferences ->
-            preferences[DARK_MODE_KEY] ?: false
+            preferences[THEME_MODE_KEY] ?: 0 // 0 = System, 1 = Light, 2 = Dark
         }
         
     val autoPlayFlow: Flow<Boolean> = context.dataStore.data
@@ -30,19 +29,14 @@ class AppPreferences(private val context: Context) {
             preferences[AUTO_PLAY_KEY] ?: true
         }
 
-    val viewModeFlow: Flow<String> = context.dataStore.data
+    val gridColumnsFlow: Flow<Int> = context.dataStore.data
         .map { preferences ->
-            preferences[VIEW_MODE_KEY] ?: "List"
+            preferences[GRID_COLUMNS_KEY] ?: 3
         }
 
-    val fontSizeFlow: Flow<String> = context.dataStore.data
-        .map { preferences ->
-            preferences[FONT_SIZE_KEY] ?: "Default"
-        }
-
-    suspend fun setDarkMode(enabled: Boolean) {
+    suspend fun setThemeMode(mode: Int) {
         context.dataStore.edit { preferences ->
-            preferences[DARK_MODE_KEY] = enabled
+            preferences[THEME_MODE_KEY] = mode
         }
     }
     
@@ -52,15 +46,9 @@ class AppPreferences(private val context: Context) {
         }
     }
 
-    suspend fun setViewMode(mode: String) {
+    suspend fun setGridColumns(columns: Int) {
         context.dataStore.edit { preferences ->
-            preferences[VIEW_MODE_KEY] = mode
-        }
-    }
-
-    suspend fun setFontSize(size: String) {
-        context.dataStore.edit { preferences ->
-            preferences[FONT_SIZE_KEY] = size
+            preferences[GRID_COLUMNS_KEY] = columns
         }
     }
 }

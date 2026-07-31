@@ -14,6 +14,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.decodeFromString
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.launch
 
 class StationRepository(private val context: Context) {
     
@@ -46,31 +47,37 @@ class StationRepository(private val context: Context) {
         }
     }
 
-    suspend fun syncStations(): Pair<Int, String?> = withContext(Dispatchers.IO) {
-        return@withContext try {
-            val apiStations = api.searchStations(country = "India", limit = 100)
-            val existing = stationDao.getAllStationsStatic().map { it.streamUrl }.toSet()
-            
-            var addedCount = 0
-            apiStations.forEach { apiStation ->
-                if (!existing.contains(apiStation.urlResolved)) {
-                    val newStation = Station(
-                        id = apiStation.id ?: "unknown_id",
-                        name = apiStation.name ?: "Unknown",
-                        streamUrl = apiStation.urlResolved ?: "",
-                        city = apiStation.state ?: "India",
-                        language = apiStation.language ?: "Unknown",
-                        logoUrl = apiStation.favicon ?: ""
-                    )
-                    stationDao.insertStation(newStation.toEntity())
-                    addedCount++
+    fun syncStations(): Pair<Int, String?> {
+        kotlinx.coroutines.GlobalScope.launch(Dispatchers.IO) {
+            try {
+                var offset = 0
+                val limit = 5000
+                while (true) {
+                    val apiStations = api.searchStations(country = null, limit = limit, offset = offset, order = "clickcount", reverse = true)
+                    if (apiStations.isEmpty()) break
+                    
+                    val existing = stationDao.getAllStationsStatic().map { it.streamUrl }.toSet()
+                    
+                    apiStations.forEach { apiStation ->
+                        if (!existing.contains(apiStation.urlResolved)) {
+                            val newStation = Station(
+                                id = apiStation.id ?: "unknown_id",
+                                name = apiStation.name ?: "Unknown",
+                                streamUrl = apiStation.urlResolved ?: "",
+                                city = apiStation.state ?: "Unknown",
+                                language = apiStation.language ?: "Unknown",
+                                logoUrl = apiStation.favicon ?: ""
+                            )
+                            stationDao.insertStation(newStation.toEntity())
+                        }
+                    }
+                    offset += limit
                 }
+            } catch (e: Throwable) {
+                Log.e("StationRepository", "Failed to sync stations", e)
             }
-            Pair(addedCount, null)
-        } catch (e: Throwable) {
-            Log.e("StationRepository", "Failed to sync stations", e)
-            Pair(-1, e.message ?: e.javaClass.simpleName)
         }
+        return Pair(0, "Background sync started! Stations will appear gradually.")
     }
 
     fun getFavouriteStations(): Flow<List<Station>> {

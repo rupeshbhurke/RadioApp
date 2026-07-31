@@ -25,6 +25,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import kotlinx.coroutines.flow.firstOrNull
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -65,7 +66,12 @@ class MainActivity : ComponentActivity() {
         radioController = RadioController(this)
         
         setContent {
-            val isDarkTheme by repository.preferences.darkModeFlow.collectAsState(initial = false)
+            val themeMode by repository.preferences.themeModeFlow.collectAsState(initial = 0)
+            val isDarkTheme = when (themeMode) {
+                1 -> false
+                2 -> true
+                else -> androidx.compose.foundation.isSystemInDarkTheme()
+            }
             val colorScheme = if (isDarkTheme) {
                 androidx.compose.material3.darkColorScheme()
             } else {
@@ -101,10 +107,13 @@ fun RadioAppScaffold(repository: StationRepository, radioController: RadioContro
     
     LaunchedEffect(Unit) {
         repository.loadInitialStationsIfNeeded()
+        val recents = repository.getRecentStations().firstOrNull()
+        if (!recents.isNullOrEmpty()) {
+            radioController.play(recents.first())
+        }
     }
 
     val items = listOf(
-        Triple(Screen.Home.route, "Home", Icons.Filled.Home),
         Triple(Screen.Browse.route, "Browse", Icons.Filled.Search),
         Triple(Screen.Favourites.route, "Favourites", Icons.Filled.Favorite),
         Triple(Screen.Settings.route, "Settings", Icons.Filled.Settings)
