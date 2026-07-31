@@ -8,6 +8,12 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface StationDao {
+    @Query("SELECT * FROM stations")
+    fun getAllStations(): Flow<List<StationEntity>>
+
+    @Query("SELECT * FROM stations")
+    suspend fun getAllStationsStatic(): List<StationEntity>
+
     @Query("SELECT * FROM stations WHERE isFavourite = 1")
     fun getFavouriteStations(): Flow<List<StationEntity>>
 
