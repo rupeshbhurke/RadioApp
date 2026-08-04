@@ -11,10 +11,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -41,8 +43,8 @@ fun getScaledFontSize(baseSize: TextUnit, scale: Float): TextUnit {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BrowseScreen(repository: StationRepository, radioController: RadioController) {
-    var searchQuery by remember { mutableStateOf("") }
-    var selectedCategory by remember { mutableStateOf<String?>(null) }
+    var searchQuery by rememberSaveable { mutableStateOf("") }
+    var selectedCategory by rememberSaveable { mutableStateOf<String?>(null) }
     val allStations by repository.getStationsFlow().collectAsState(initial = emptyList())
     
     val categories = remember(allStations) {
@@ -78,7 +80,14 @@ fun BrowseScreen(repository: StationRepository, radioController: RadioController
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 8.dp),
             placeholder = { Text("Search stations...") },
-            leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Search") }
+            leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Search") },
+            trailingIcon = {
+                if (searchQuery.isNotEmpty()) {
+                    IconButton(onClick = { searchQuery = "" }) {
+                        Icon(Icons.Default.Close, contentDescription = "Clear Search")
+                    }
+                }
+            }
         ) {}
         
         if (categories.isNotEmpty()) {
