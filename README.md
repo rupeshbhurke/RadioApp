@@ -5,12 +5,14 @@ RadioApp allows users to search, favorite, and stream thousands of internet radi
 
 ## Features
 - **Global Radio Search:** Browse and search tens of thousands of radio stations dynamically fetched from the Radio Browser API.
+- **Smart Search State:** Search queries and filters are preserved seamlessly while navigating between tabs.
 - **Background Sync:** Seamlessly fetches thousands of stations in the background without locking up the UI.
-- **Favorites:** Save your favorite stations for quick access.
+- **Favorites:** Save your favorite stations for quick access. 
+- **Cloud Backup:** Fully integrated with Android Auto Backup to persist your favorites across app reinstalls and device switches.
 - **Auto-Play:** Automatically starts playing the last played station on launch.
 - **Dynamic Theming:** Supports System Default, Light, and Dark modes.
 - **Customizable Layout:** Adjust grid layout from 1-column list views to 5-column grid views.
-- **Mini Player:** Sticky bottom player controls across all tabs.
+- **Mini Player:** Sticky bottom player controls across all tabs, featuring marquee scrolling for long station names and a quick-action favorite toggle.
 - **Media Session Integration:** Fully integrates with Android's MediaSession for lock-screen controls, Bluetooth metadata, and headset button support.
 - **Sleep Timer:** Automatically stops playback and exits the app after a set duration.
 
