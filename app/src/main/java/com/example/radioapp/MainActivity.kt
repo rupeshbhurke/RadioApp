@@ -131,7 +131,7 @@ fun RadioAppScaffold(repository: StationRepository, radioController: RadioContro
         modifier = Modifier.fillMaxSize(),
         bottomBar = {
             Column {
-                MiniPlayer(radioController = radioController)
+                MiniPlayer(radioController = radioController, repository = repository)
                 NavigationBar {
                     val navBackStackEntry by navController.currentBackStackEntryAsState()
                     val currentDestination = navBackStackEntry?.destination

@@ -1,6 +1,7 @@
 package com.example.radioapp.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -27,15 +28,25 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.radioapp.player.RadioController
 
+import com.example.radioapp.data.StationRepository
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
+import kotlinx.coroutines.launch
+
+@OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class)
 @Composable
 fun MiniPlayer(
     radioController: RadioController,
+    repository: StationRepository,
     modifier: Modifier = Modifier
 ) {
     val currentStation by radioController.currentStation.collectAsState()
     val isPlaying by radioController.isPlaying.collectAsState()
     val errorMessage by radioController.errorMessage.collectAsState()
     val sleepTimerRemaining by radioController.sleepTimerRemaining.collectAsState()
+    
+    val favourites by repository.getFavouriteStations().collectAsState(initial = emptyList())
+    val coroutineScope = androidx.compose.runtime.rememberCoroutineScope()
 
     if (currentStation != null) {
         Row(
@@ -55,7 +66,7 @@ fun MiniPlayer(
                     text = currentStation!!.name,
                     style = MaterialTheme.typography.titleMedium,
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                    modifier = Modifier.basicMarquee()
                 )
                 if (errorMessage != null) {
                     Text(
@@ -101,16 +112,30 @@ fun MiniPlayer(
                     Icon(imageVector = Icons.Default.Close, contentDescription = "Clear Error")
                 }
             } else {
-                IconButton(onClick = {
-                    if (isPlaying) radioController.pause() else radioController.resume()
-                }) {
-                    if (isPlaying) {
-                        Text("||") 
-                    } else {
+                Row {
+                    val isFav = favourites.any { it.id == currentStation?.id }
+                    IconButton(onClick = {
+                        currentStation?.let { st ->
+                            coroutineScope.launch { repository.toggleFavourite(st) }
+                        }
+                    }) {
                         Icon(
-                            imageVector = Icons.Filled.PlayArrow,
-                            contentDescription = "Play"
+                            imageVector = if (isFav) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+                            contentDescription = "Toggle Favourite",
+                            tint = if (isFav) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
                         )
+                    }
+                    IconButton(onClick = {
+                        if (isPlaying) radioController.pause() else radioController.resume()
+                    }) {
+                        if (isPlaying) {
+                            Text("||") 
+                        } else {
+                            Icon(
+                                imageVector = Icons.Filled.PlayArrow,
+                                contentDescription = "Play"
+                            )
+                        }
                     }
                 }
             }
